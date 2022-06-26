@@ -1,0 +1,332 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = Java
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+Package = gals
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = String
+Parser = SLR
+#RegularDefinitions
+DIGITS : [0-9]
+LETTER : [A-Za-z]
+WHITESPACE :[\n\s\t\r\ ]*
+BAR : ["/"]
+COMMENTS: {BAR}{BAR}[^}\n\r]*
+MULTICOMMENTS :  "/*"(.|\r|\n)*"*/"
+
+//0 TID
+//1 TYPE
+//2 TYPES WITH *
+//3 ARR
+//4 TYPE TID
+//5
+#Tokens
+:{WHITESPACE}
+"*"
+"**"
+"++"
+"--"
+"+="
+"*="
+"-="
+"/="
+
+//aritmeticos
+"+"
+"-"
+"*"
+"/"
+"%"
+//relacional
+">"
+"<"
+">="
+"<="
+"="
+"!="
+"=="
+//logicos
+"&&"
+"||"
+"!"
+// bitwise
+"~"
+">>"
+"<<"
+"^"
+"|"
+"&"
+// parenteses
+"("
+")"
+
+
+
+
+
+TBIN : B[0-1]+
+TOCT : 0[0-7]+
+THEX : 0x[0-9A-Fa-f]+
+TBOOL : (true|false)
+MULTICOMMENTS : {MULTICOMMENTS}
+FUNCTION : function
+TID : ({LETTER} | _ )({LETTER} | {DIGITS} | _ )*
+TCHAR : '[^']+'
+TSTRING : \"[^\"]*\"
+TFLOAT : {DIGITS}+\.{DIGITS}+
+TINT : {DIGITS}+
+
+///R.WORDS
+
+BEGIN = TID : "begin"
+END   = TID : "end"
+IF    = TID : "if"
+ELSE  = TID : "else"
+ELSE_IF = TID : "else_if"
+WHILE = TID : "while"
+DO    = TID : "do"
+WRITE = TID : "write"
+FOR = TID : "for"
+
+RETURN = TID: "return"
+VOID = TID: "void"
+//INPUTS
+CWRITE = TID : "cout"
+CREAD = TID : "cin"
+///DECLARE
+	
+DINT = TID : "int"
+DSTRING = TID : "string"
+DCHAR = TID : "char"
+DFLOAT = TID : "float"
+DBOOL = TID : "boolean"
+SUM : "+"
+SUB : "-"
+DIV : "/"
+MULT : "*"
+MOD : "%"
+
+//IN LOOPS
+DECREASE : "--"
+INCREASE : "++"
+
+RECEIVES : "="
+
+//RELATIONAL
+
+EQUAL : "=="
+GREATOREQ : ">="
+LESSOREQ : "<="
+DIFF : "!="
+GREATTHAN : ">"
+LESSTHAN : "<"
+
+//LOGICAL
+
+AND : "&&"
+OR : "||"
+NOT : "!"
+
+//BITWISE
+
+RIGHTSHIFT: ">>"
+LEFTSHIFT : "<<"
+BAND : "&"
+BOR : "|"
+XOR : "^"
+NOT : "~"
+
+COMMENTS : {COMMENTS}
+
+
+
+//DELIMITERS
+
+DOT : "."
+COMMA : ","
+COLON : ":"
+SEMICOLON : ";"
+CURLYBOPEN : "{"
+CURLYBCLOSE : "}"
+TCLOSEP : ")"
+TOPENP	: "("
+OPENK : "["
+CLOSEK : "]"
+
+#NonTerminals
+<program>
+<cmdlist>
+<cmd_list_total>
+<cmd>
+<cmd_global>
+<cmd_total>
+<assign>
+<arrCheck>
+<parameters>
+<call_func>
+<params_to_use>
+<assignment_exp>
+<assignment_exp2>
+<instance_or_new>
+<tid_or_num>
+<adress>
+<adress_or_mult>
+<self_assignment>
+<void_or_type>
+<arr>
+<arr_opt>
+<arr1>
+<arr_elem>
+<arr_elem2>
+<self>
+<all_parameters>
+<variable_or_num>
+<parameters_or_none>
+<else>
+<else_if>
+<id_or_int>
+<declare_or_compose>
+<receives_from_function>
+<read>
+<read2>
+<write>
+<write2>
+<writeExp>
+<type>
+<type2>
+<instance_or_new2>
+<int>
+<input>
+<return_or_not>
+<multiIds>
+<multiIds2>
+<exp_with_increment>
+<exp>
+<exp1>
+<exp2>
+<exp3>
+<exp4>
+<exp5>
+<exp6>
+<exp7>
+<exp8>
+<exp9>
+<exp10>
+<op_rel>
+<op_neg>
+<op_bitwise>
+<op_arit_baixa>
+<op_arit_alta>
+<op_arit_mais_alta>
+
+#Grammar
+<program> ::=  <cmdlist>;
+<cmdlist> ::= <cmd_global> <cmdlist> | î;
+<cmd_total>::= <cmd_global> | <cmd>;
+<cmd_global> ::= <assign> SEMICOLON#34;
+//GLOBAL = {FUNCOES,VARIAVEIS}
+<cmd_list_total> ::= <cmd_total><cmd_list_total>| î;
+//TOTAL = {GLOBAL + RESTANTE DOS "CMDS"}
+
+//ASSIGNMENT = {TIPO + TID ou TID | TIPO+TID ou TID seguido por expressao de ass|uso ou criacao de arr|TID ++ ou TID--|uso ou decl de multiIds|Variavel recebe de funcao}
+<assign>::= <instance_or_new> | <instance_or_new> <assignment_exp>  <exp> |<arr_opt> | TID <self_assignment> | <instance_or_new> COMMA <multiIds>| <instance_or_new> <receives_from_function> | <arr_opt> COMMA <multiIds>;
+<arr_opt>::= <type> TID#3 <arr>|TID#15 <arr1>  ;
+<arr>::=  OPENK#38 CLOSEK#39 <assignment_exp> CURLYBOPEN <arr_elem> CURLYBCLOSE | OPENK#38 TINT#37 CLOSEK#39 ;
+<arr1>::=  OPENK#38 TINT #14 CLOSEK#39 <assignment_exp> <assignment_exp2> | OPENK#38  TID#14 CLOSEK#39 <assignment_exp> <assignment_exp2> | OPENK#38 TID#14 CLOSEK#39 <receives_from_function>|OPENK#38 TINT#14 CLOSEK#39 <receives_from_function>;
+<arr_elem>::= <arr_elem> <arr_elem2>|<exp10>;
+<arr_elem2>::=  COMMA <exp10>;
+<assignment_exp>::= <op_arit_alta> | <op_rel> | <op_arit_baixa>|<self>;
+<assignment_exp2>::= <exp10> | <exp10><assignment_exp><assignment_exp2>   ;
+<receives_from_function>::=  <assignment_exp> TID#16 "("<parameters_or_none> ")";
+<parameters_or_none>::= <multiIds> | î;
+<variable_or_num>::= <exp>;
+<instance_or_new>::= <type>  TID #4| TID#0;
+<adress>::= <adress_or_mult> | î;
+<adress_or_mult>::= "*";
+ 
+ 
+///CONDITIONALS
+/// if(exp){}
+///if(exp){}else_if(exp){}else{}
+///if(exp){}else{}
+<cmd>::= IF#22 "(" <exp>#40 ")"#25 CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33 ;
+<cmd>::= IF#22 "(" <exp>#40 ")" #25CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33  <else_if> <else> ;
+<cmd>::= IF#22 "(" <exp>#40 ")" #25CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33  <else> ;
+ 
+<else_if>::=ELSE_IF#26 "(" <exp>#40 ")"#25 CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33  <else_if>|ELSE_IF#26 "(" <exp>#40 ")"#25 CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33 ;
+<else>::=   ELSE#45 CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33;
+///LOOPS
+
+///while(exp){}
+//do{}while(exp);
+//for(i =0;i<x;i++){} 
+<cmd> ::= WHILE#19 "("<exp>#40")"#25 CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33 ;
+<cmd> ::= DO #20CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33 WHILE#19 "("<exp>#40")"#25 SEMICOLON;
+<cmd>::= FOR #21"(" TID#8 "=" <tid_or_num> SEMICOLON#46 TID#8 <op_rel>#40 <exp> SEMICOLON#46 <exp_with_increment> ")"#29CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33;
+<tid_or_num>::= TID#8 | TINT#9;
+
+<exp_with_increment>::= <exp> | TID#8 <self_assignment>;
+ 
+///INPUTS-OUTPUTS
+//cin>>x;
+<cmd>::= <read> | <read> SEMICOLON#34;
+<read>::= <read> ">>" TID | <read2>;
+<read2>::= CREAD#36 ">>" TID#8 | CREAD#36 ">>" TID#8 OPENK#38 <exp> CLOSEK#39;
+//cout<<x;
+<cmd>::= <write> | <write> SEMICOLON#34;
+<write>::= <write> "<<" TID#8 | <write> "<<" TSTRING|<write2>;
+<write2>::= CWRITE#35 "<<" <writeExp>;
+<writeExp>::=  <exp7>;
+
+//DECLARE OR COMPOSE
+//void x(){ int z();}
+//Uso e criacao de funcoes
+<cmd_global>::= <void_or_type> "("  <parameters> ")" CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33 SEMICOLON;
+
+<cmd>::= TID #6"(" <params_to_use> ")" SEMICOLON;
+<params_to_use>::= <params_to_use> COMMA TID| <params_to_use> COMMA TINT | <params_to_use> COMMA TCHAR | <params_to_use> COMMA TFLOAT | <params_to_use> COMMA TBOOL |<params_to_use> TFLOAT|<params_to_use> TBOOL |<params_to_use> TSTRING |<params_to_use> TCHAR  |<params_to_use> TINT |<params_to_use> TID|î ;
+<parameters>::= <parameters> COMMA <type> TID#5| <type> TID#5| <parameters> COMMA <type2> TID#18 | <type2> TID#18 |<parameters> COMMA <arrCheck>|<arrCheck>| î ;  
+
+//MULTIIDS & MULTIDS2 para cobrir suporte a multiIds e multiTids de vetores 
+<multiIds>::= <multiIds> COMMA <instance_or_new>  |<multiIds> COMMA <instance_or_new2>|<multiIds2> | <multiIds> COMMA <arrCheck> ;
+<multiIds2>::=  <all_parameters>;
+<declare_or_compose>::= CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33 | SEMICOLON;
+<return_or_not>::= RETURN <exp> SEMICOLON;
+<void_or_type>::= VOID#1 TID#17  | <type> TID#17;
+<instance_or_new2>::= <type2> TID | "*" TID;
+ 
+<cmd>::= <return_or_not>;
+ 	
+<all_parameters>::= <instance_or_new>|
+<instance_or_new2>|<arrCheck> ;
+
+<arrCheck>::=<type> TID#3 OPENK#38 CLOSEK#39|
+<type> TID#3 OPENK#38 TINT#37 CLOSEK#39 |
+TID#3 OPENK#38 CLOSEK#39|
+TID#3 OPENK#38 TINT#37 CLOSEK#39;
+ 
+<exp>  ::= <exp> "||"#27 <exp1> | <exp1>;
+<exp1> ::= <exp1> "&&"#27<exp2> |<exp2>;
+<exp2> ::= <exp2> "|"#12 <exp3> | <exp3>;
+<exp3> ::= <exp3> "^"#12 <exp4> | <exp4>;
+<exp4> ::= <exp4> "&"#12 <exp5> | <exp5>;
+<exp5> ::= <exp5> <op_rel> <exp6> | <exp6>;
+<exp6> ::= <exp6> <op_bitwise> <exp7> | <exp7>;
+<exp7> ::= <exp7> <op_arit_baixa> <exp8> | <exp8>;
+<exp8> ::= <exp8> <op_arit_alta> <exp9> | <exp9> ;
+<exp9> ::= <op_neg> <exp10> | <exp10>;
+<exp10> ::= TSTRING#13|TID#8 OPENK#38 CLOSEK#39| OPENK#38 CLOSEK#39|TID#8 OPENK#38 <variable_or_num> CLOSEK#39| OPENK#38 <variable_or_num> CLOSEK#39 |TINT#9 | TFLOAT#10 | TID #8|TCHAR#11|TBOOL#23| "(" <exp> ")";
+ 
+<op_rel> ::= ">"#44 | "<"#44 | ">="#44 | "<="#44 | "=" #24| "!="#44|"=="#44;
+<op_neg> ::= "-" | "~" | "!";
+<op_bitwise> ::= "<<"#12 | ">>"#12;
+<op_arit_baixa> ::= "+"#12 | "-"#12;
+<op_arit_alta> ::= "*"#12 | "/"#12 | "%"#12;
+<self_assignment>::= "++"#41| "--"#41;
+<self>::=  "+="|"-="|"/="|"*=";
+<type>::=DINT#1|DSTRING#1|DFLOAT#1|DBOOL#1|DCHAR#1;
+<type2>::=DINT"*"#2|DSTRING"*"#2|DFLOAT"*"#2|DBOOL"*"#2|DCHAR"*"#2;
