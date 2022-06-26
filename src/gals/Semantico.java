@@ -33,7 +33,7 @@ public class Semantico implements Constants
     public List<Integer> pileOfScopes = new ArrayList<Integer>();
     private int scopeCounter=0;
     Simbolo lastSimbol = new Simbolo();
-    private boolean isAttr = false;
+    public boolean isAttr = false;
     private boolean isCin = false;
     private boolean isCout = false;
     private boolean isVect = false;
@@ -54,7 +54,7 @@ public class Semantico implements Constants
     public SemanticTable semanticTable = new SemanticTable();
     Simbolo lastAddSymbol= new Simbolo();
     public  Assembly assembly = new Assembly();
-    Simbolo elementOnTheLeftSideOfAttr;
+    public Simbolo elementOnTheLeftSideOfAttr;
     boolean leftElementIsVect = false;
     ArrayList<String> coutPile = new ArrayList<>();
     ArrayList<String> coutPileOfTypes = new ArrayList<>();
@@ -164,6 +164,7 @@ public class Semantico implements Constants
         Main.branch.branchCounter=0;
         Main.branch.branchPile.clear();
         Main.func.listOfFunctions.clear();
+        Main.sem.calledParameters.clear();
         isWhile = false;
     }
     public void changedToUsed(Simbolo sim){
@@ -1173,17 +1174,20 @@ public class Semantico implements Constants
                 elementOnTheLeftSideOfAttr = t;
                 leftElementIsVect=true;
                 break;
+            case 16:
+                calledFunction = token.getLexeme();
+                break;
             case 17://Function declare
-                Simbolo functionSymb = new Simbolo();
-                functionSymb.name = token.getLexeme();
-                functionSymb.type = this.type;
-                functionSymb.func = true;
-                functionSymb.scope = pileOfScopes.get(pileOfScopes.size()-1);
+                Simbolo functionSymb1 = new Simbolo();
+                functionSymb1.name = token.getLexeme();
+                functionSymb1.type = this.type;
+                functionSymb1.func = true;
+                functionSymb1.scope = pileOfScopes.get(pileOfScopes.size()-1);
                 isFunc = true;
-                if(!checkIfVarExistsCurrentContext(functionSymb)){
-                    symbolTable.add(functionSymb);
+                if(!checkIfVarExistsCurrentContext(functionSymb1)){
+                    symbolTable.add(functionSymb1);
                     Function func_ = new Function();
-                    func_.name = functionSymb.name;
+                    func_.name = functionSymb1.name;
                     Main.func.listOfFunctions.add(func_);
 
                 }else{
