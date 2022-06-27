@@ -41,6 +41,7 @@ public class Semantico implements Constants
     public boolean isDo = false;
     public boolean isFor = false;
     public boolean isFunc = false;
+    public boolean isReturn = false;
     public String indexOfAttr;
     public List<String> attrPile = new ArrayList<>();
     public List<String> attrPileOfLex = new ArrayList<>();
@@ -67,6 +68,8 @@ public class Semantico implements Constants
     public boolean isParameter = false;
     public String calledFunction;
     public ArrayList<String> calledParameters = new ArrayList<>();
+    public ArrayList<String> returnList = new ArrayList<>();
+
 
 
     public String listOfOps[] = {"+","-","<<",">>","|","&"};
@@ -863,12 +866,33 @@ public class Semantico implements Constants
     private void treatingVects() throws SemanticError {
             operateWithIndexeCin();
     }
+    public boolean checkIfElIsAParameterFromCurrentFunc(String element){
+        for(Function function : Main.func.listOfFunctions){
+            if(function.parameterList.contains(element)){
+                return true;
+            }
+        }
+        return  false;
+    }
     public void executeAction(int action, Token token) throws SemanticError, SyntaticError {
         System.out.println(action + " " + token);
 
         if(action==34 && attrPile.size()>0) {
             checkAttr();
-            assembly.store(elementOnTheLeftSideOfAttr.name,assembly,leftElementIsVect);
+            if(!isFunc) {
+                assembly.store(elementOnTheLeftSideOfAttr.name, assembly, leftElementIsVect);
+            }else{
+                boolean leftIsPar = checkIfElIsAParameterFromCurrentFunc(elementOnTheLeftSideOfAttr.name);
+
+                if(leftIsPar){
+                    Function x = Main.func.getFunctionByName(Main.func.listOfFunctions.get(Main.func.listOfFunctions.size()-1).name);
+                    assembly.store(elementOnTheLeftSideOfAttr.name, assembly, leftElementIsVect,x);
+                }else{
+                    assembly.store(elementOnTheLeftSideOfAttr.name, assembly, leftElementIsVect);
+
+
+                }
+            }
             changedToInit(elementOnTheLeftSideOfAttr.name);
             attrPile.clear();
             attrPileOfLex.clear();
@@ -999,7 +1023,7 @@ public class Semantico implements Constants
                     System.out.println("Uso de variavel nao inicializada");
                     warningOutput += "Uso de variavel nao inicializada\n";
                 }
-                if(isAttr){
+                if(isAttr && !isReturn){
                     attrPile.add(type);
                     attrPileOfLex.add(token.getLexeme());
                 }
@@ -1050,6 +1074,9 @@ public class Semantico implements Constants
                     indexList.add(index);
                 }
 
+                if(isReturn){
+                    returnList.add(token.getLexeme());
+                }
 
                 break;
             case 9://adding int
@@ -1101,6 +1128,9 @@ public class Semantico implements Constants
                     index.fatherPosition= Integer.toString(positionOfLastAddedVec(symbolTable,expPilesOfBranches,attrPileOfLex));
                     index.positionInBranch=expPilesOfBranches.size()-1;
                     indexList.add(index);
+                }
+                if(isReturn){
+                    returnList.add(token.getLexeme());
                 }
 
                 break;
@@ -1154,6 +1184,9 @@ public class Semantico implements Constants
                 if(isBranch){
                     expPilesOfBranches.add(token.getLexeme());
                     attrPileOfLex.add(token.getLexeme());
+                }
+                if(isReturn){
+                    returnList.add(token.getLexeme());
                 }
 
                 break;
@@ -1244,6 +1277,11 @@ public class Semantico implements Constants
                     Main.func.endFuncProcess();
                     isFunc = false;
                 }
+                if(isReturn){
+                    Main.func.handleReturn(returnList);
+                }
+                isReturn = false;
+                returnList.clear();
                 break;
             case 34://Attrib close
                 isAttr=false;
@@ -1310,6 +1348,11 @@ public class Semantico implements Constants
             case 51:
                 calledParameters.add(token.getLexeme());
                 break;
+            case 52://return
+                isReturn = true;
+
+
+
         }
         globalLastAction = action;
 

@@ -134,11 +134,6 @@ public class Assembly {
         if(tokenOp.equals("|")){assembly.textArray.add("        OR    " + lastToken + "\n");}
     }
     public void addToIndex(String token, String op,Assembly assembly){
-        if(Main.func.listOfFunctions.get(Main.func.listOfFunctions.size()-1).parameterList.contains(token)){
-            token = token +"_" +Main.func.listOfFunctions.get(Main.func.listOfFunctions.size()-1).name;
-        }
-
-
         Boolean flag = Character.isDigit(token.charAt(0));
         if(flag){
             if(op.equals("+")){assembly.textArray.add("        ADDI    " + token + "\n");}
@@ -246,6 +241,8 @@ public class Assembly {
         assembly.textArray.add("        LD   " +tempAssembly[1]+"\n");
     }
 
+
+
     public void simpleVecReceivesVec(String token,String indexLeft, Assembly assembly, String elementOnTheLeftSideOfAttr, String indexRight){
         System.out.println("simpleVecintVecIntAttr");
         Boolean indexFlag = Character.isDigit(indexLeft.charAt(0));
@@ -289,6 +286,7 @@ public class Assembly {
         }
         //assembly.textArray.add("        STO  " +elementOnTheLeftSideOfAttr+"\n");
     }
+
 
 
 
@@ -383,6 +381,9 @@ public class Assembly {
     public void call(String functionName, Assembly assembly){
         assembly.textArray.add("        CALL  " + functionName+ "\n");
 
+    }
+    public void returnF(Assembly assembly){
+        assembly.textArray.add("        RETURN  " +"0"+ "\n");
     }
 
 

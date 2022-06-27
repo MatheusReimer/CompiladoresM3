@@ -7,7 +7,7 @@ public class FunctionsAndProcedures {
     public ArrayList<Function> listOfFunctions = new ArrayList<>();
 
 
-    private Function getFunctionByName(String name){
+    public Function getFunctionByName(String name){
         for(Function x : listOfFunctions){
             if(x.name.equals(name)){
                 return x;
@@ -42,6 +42,21 @@ public class FunctionsAndProcedures {
             Main.sem.assembly.store(Main.sem.elementOnTheLeftSideOfAttr.name,Main.sem.assembly,false);
         }
 
+    }
+    public void handleReturn(ArrayList<String> list){
+        if(Main.sem.checkIfElIsAParameterFromCurrentFunc(list.get(0))){
+            Main.sem.assembly.simpleVarReceivesIntOrVar(list.get(0)+"_"+listOfFunctions.get(listOfFunctions.size()-1).name,Main.sem.assembly);
+        }else{
+            Main.sem.assembly.simpleVarReceivesIntOrVar(list.get(0),Main.sem.assembly);
+        }
+        for(int i =1;i<list.size();i=i+2){
+            if(Main.sem.checkIfElIsAParameterFromCurrentFunc(list.get(i+1))){
+                Main.sem.assembly.addToIndex(list.get(i+1)+"_"+listOfFunctions.get(listOfFunctions.size()-1).name,list.get(i),Main.sem.assembly);
+            }else{
+                Main.sem.assembly.addToIndex(list.get(i+1),list.get(i),Main.sem.assembly);
+            }
+        }
+        Main.sem.assembly.returnF(Main.sem.assembly);
     }
 
 }
