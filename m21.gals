@@ -241,10 +241,10 @@ CLOSEK : "]"
 <arr_elem2>::=  COMMA <exp10>;
 <assignment_exp>::= <op_arit_alta> | <op_rel> | <op_arit_baixa>|<self>;
 <assignment_exp2>::= <exp10> | <exp10><assignment_exp><assignment_exp2>   ;
-<receives_from_function>::=  <assignment_exp> TID#16 "("<parameters_or_none> ")";
+<receives_from_function>::=  <assignment_exp> TID#16 "("#49<parameters_or_none> ")"#50;
 <parameters_or_none>::= <multiIds> | î;
 <variable_or_num>::= <exp>;
-<instance_or_new>::= <type>  TID #4| TID#0;
+<instance_or_new>::= <type>  TID #4| TID#0 | TINT#51;
 <adress>::= <adress_or_mult> | î;
 <adress_or_mult>::= "*";
  
@@ -285,17 +285,17 @@ CLOSEK : "]"
 //DECLARE OR COMPOSE
 //void x(){ int z();}
 //Uso e criacao de funcoes
-<cmd_global>::= <void_or_type> "("  <parameters> ")" CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33 SEMICOLON;
+<cmd_global>::= <void_or_type> "("#47  <parameters> ")"#48 CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33 SEMICOLON;
 
-<cmd>::= TID #6"(" <params_to_use> ")" SEMICOLON;
-<params_to_use>::= <params_to_use> COMMA TID| <params_to_use> COMMA TINT | <params_to_use> COMMA TCHAR | <params_to_use> COMMA TFLOAT | <params_to_use> COMMA TBOOL |<params_to_use> TFLOAT|<params_to_use> TBOOL |<params_to_use> TSTRING |<params_to_use> TCHAR  |<params_to_use> TINT |<params_to_use> TID|î ;
+<cmd>::= TID #6"("#49 <params_to_use> ")"#50 SEMICOLON;
+<params_to_use>::= <params_to_use> COMMA TID#51| <params_to_use> COMMA TINT#51 | <params_to_use> COMMA TCHAR#51 | <params_to_use> COMMA TFLOAT#51 | <params_to_use> COMMA TBOOL#51 |<params_to_use> TFLOAT#51|<params_to_use> TBOOL#51 |<params_to_use> TSTRING#51 |<params_to_use> TCHAR#51  |<params_to_use> TINT#51 |<params_to_use> TID#51|î ;
 <parameters>::= <parameters> COMMA <type> TID#5| <type> TID#5| <parameters> COMMA <type2> TID#18 | <type2> TID#18 |<parameters> COMMA <arrCheck>|<arrCheck>| î ;  
 
 //MULTIIDS & MULTIDS2 para cobrir suporte a multiIds e multiTids de vetores 
-<multiIds>::= <multiIds> COMMA <instance_or_new>  |<multiIds> COMMA <instance_or_new2>|<multiIds2> | <multiIds> COMMA <arrCheck> ;
+<multiIds>::= <multiIds> COMMA <instance_or_new>  |<multiIds> COMMA <instance_or_new2>|<multiIds2> | <multiIds> COMMA <arrCheck>;
 <multiIds2>::=  <all_parameters>;
 <declare_or_compose>::= CURLYBOPEN#32 <cmd_list_total> CURLYBCLOSE#33 | SEMICOLON;
-<return_or_not>::= RETURN <exp> SEMICOLON;
+<return_or_not>::= RETURN#52 <exp> SEMICOLON;
 <void_or_type>::= VOID#1 TID#17  | <type> TID#17;
 <instance_or_new2>::= <type2> TID | "*" TID;
  
