@@ -59,4 +59,7 @@ public class FunctionsAndProcedures {
         Main.sem.assembly.returnF(Main.sem.assembly);
     }
 
+    public void handleVoid(){
+        Main.sem.assembly.returnF(Main.sem.assembly);
+    }
 }

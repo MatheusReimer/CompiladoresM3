@@ -42,6 +42,7 @@ public class Semantico implements Constants
     public boolean isFor = false;
     public boolean isFunc = false;
     public boolean isReturn = false;
+    public boolean isVoid = false;
     public String indexOfAttr;
     public List<String> attrPile = new ArrayList<>();
     public List<String> attrPileOfLex = new ArrayList<>();
@@ -936,6 +937,9 @@ public class Semantico implements Constants
                 break;
             case 1: {
                 this.type = token.getLexeme();
+                if(type.equals("void")){
+                    isVoid= true;
+                }
                 if(isParameter){
                     Function x = Main.func.listOfFunctions.get(Main.func.listOfFunctions.size()-1);
                     x.parameterList.add(this.type);
@@ -1217,6 +1221,9 @@ public class Semantico implements Constants
                 functionSymb1.func = true;
                 functionSymb1.scope = pileOfScopes.get(pileOfScopes.size()-1);
                 isFunc = true;
+                if(this.type.equals("void")){
+                    this.isVoid= true;
+                }
                 if(!checkIfVarExistsCurrentContext(functionSymb1)){
                     symbolTable.add(functionSymb1);
                     Function func_ = new Function();
@@ -1280,6 +1287,10 @@ public class Semantico implements Constants
                 if(isReturn){
                     Main.func.handleReturn(returnList);
                 }
+                else if(isVoid){
+                    Main.func.handleVoid();
+                }
+                isVoid = false;
                 isReturn = false;
                 returnList.clear();
                 break;
