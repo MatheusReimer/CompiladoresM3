@@ -935,6 +935,14 @@ public class Semantico implements Constants
             case -2:
                 pileOfScopes.add(0);
                 break;
+            case 0:
+                Simbolo att = new Simbolo();
+                att.name = token.getLexeme();
+                att.type = this.type;
+                att.scope = pileOfScopes.get(pileOfScopes.size()-1);
+                lastAddSymbol=att;
+                elementOnTheLeftSideOfAttr = att;
+                break;
             case 1: {
                 this.type = token.getLexeme();
                 if(type.equals("void")){
@@ -1349,9 +1357,7 @@ public class Semantico implements Constants
             break;
             case 48:
                 isParameter=false;
-                if(isFunc) {
-                    Main.func.continueProcessParameter();
-                }
+
                 break;
             case 50:
                 Main.func.callFunc();

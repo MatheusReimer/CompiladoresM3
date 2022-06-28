@@ -16,6 +16,9 @@ public class FunctionsAndProcedures {
         return  null;
     }
     public void startProcess(String name){
+        if(Main.branch.branchCounter==0) {
+            Main.sem.assembly.makeJump(Main.sem.assembly, -2);
+        }
         BranchCounter obj = new BranchCounter();
         Main.branch.branchCounter++;
         obj.lastBranchType = "func";
@@ -23,8 +26,12 @@ public class FunctionsAndProcedures {
         Main.branch.branchPile.add(obj);
         Main.sem.assembly.funcLabel(Main.sem.assembly, (Main.branch.branchPile.get(Main.branch.branchPile.size()-1).number) + name);
     }
-    public void continueProcessParameter(){
-
+    public void finalizeProcess(){
+        for(int i=0;i<Main.sem.assembly.textArray.size();i++){
+            if(Main.sem.assembly.textArray.get(i).contains("-2")){
+                Main.sem.assembly.textArray.set(i,Main.sem.assembly.textArray.get(i).replace("-2",Main.branch.branchCounter+"main"));
+            }
+        }
     }
     public void endFuncProcess(){
         Main.branch.branchPile.remove(Main.branch.branchPile.size()-1);

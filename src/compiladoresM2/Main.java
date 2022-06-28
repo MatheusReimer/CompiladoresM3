@@ -75,7 +75,7 @@ public class Main {
 
             sem.executeAction(-1,token2);
             sem.printTable();
-
+            Main.func.finalizeProcess();
 
         } catch (LexicalError e) {
             output += e.getMessage();
